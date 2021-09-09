@@ -1,0 +1,158 @@
+---
+title: "Intro to R Markdown"
+subtitle: "R2R Environmental Data Science Summer Institute"
+author: "Dr. Amy Henry, UCI"
+date created: "1/27/2021"
+last modified: "8/30/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content (including these notes and headers) as well as the output of any embedded R code chunks within the document. 
+
+Try this now! There are two ways to preview your knitted document: 
+1) in a pop-out window,  2) in the Viewer pane on the right side of RStudio. To select one or the other, go to the cogwheel dropdown to the right of the **Knit** button and choose either Preview in Window or Preview in Viewer pane. I will be presenting in Viewer Pane. 
+
+## Chunks
+You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars) # You can still use the # operator to make notes within your code. I find it most useful when I want to make a note about a single line. Notes about the whole chunk I'll do in the white/black text. 
+```
+
+You already know how to run an R code line using the Command + Enter shortcut on a highlighted line. To run a whole chunk, you can either:
+- run your whole document at once and generate an output (the "Knit" button at the top), 
+- click the green "Play" button on the right side of the chunk header. 
+
+The triangle pointing down to a line runs everything in the document UNTIL that chunk. Play around with the different ways to run the chunk below, and note how the output differs. 
+
+```{r arithmetic}
+2+2
+5+5
+```
+
+If you generate a plot, it will also show it directly underneath the chunk. 
+
+```{r plot cars}
+plot(cars)
+```
+
+### Good formatting
+Like in a regular RScript, it's a good habit to put a chunk at the top where you install/load all the packages you're going to use in the script (which you can update as you go along!) and where you load in your data. 
+```{r packages}
+#install.packages("knitr", "tidyverse")
+library(knitr)
+library(tidyverse)
+```
+
+```{r import data}
+load(file = "S4E2e.RData")
+# We loaded one of these back in line 69 - it's a bundle of R objects that are examples in a textbook. 
+```
+
+Peek back at the header at the top of this document - None of those categories are strictly necessary, but can be useful when you're working on multiple projects. This header is where (as an advanced user) you formatting that applies to the whole document, like an automatically generated table of contents. 
+
+For now, just leave the first setup chunk alone. 
+
+### Syntax of a chunk
+Notice how the syntax works in the curly brackets. 
+
+Three tick marks (on the same key as the tilde, ~) mark the start and end of a chunk. The curly brackets contain information about how you want your chunk run. First it says "r" to tell it to run using the R language (markdown can do python too!), then an optional name, a comma, and the details on how to run it. 
+
+{r ChunkName, eval = TRUE, echo = TRUE}
+
+#### Naming chunks for organization
+For organization, it is good practice to name your chunks. This, in addition to using headers (#) makes it very easy to find your way around your code! Try clicking the yellow # button at the bottom of this script window, which should have a dropdown that says "Syntax of a chunk". See that awesome outline? 
+
+Other things in the curly brackets indicate whether you want the code to run or not (useful if you're playing around with different things), show or not (if you're outputting a big document maybe you don't want ALL the code printed in it). You can manipulate those characteristics with the little cogwheel icon at the far right of the header of each chunk. 
+#### Making a new chunk
+Generating a new chunk: Command + Alt + I generates a new "chunk". Try it! 
+
+```{r ChunkName, include=FALSE}
+# No two chunks can have the same name! 
+2+3
+```
+
+#### controlling chunk behavior
+
+**echo = FALSE** means run the code, but don't show it in the knitted document. 
+
+**include = FALSE** means run the code but don't show either the output or the code in the printout
+
+**eval = FALSE** means to not run this chunk of code when I knit the document (it may be a chunk that I'm still working on and doesn't run smoothly, or just something I don't feel like deleting)
+
+(Peek at the output in the the Knitted document - **bold**, *italic*)
+
+## These are headers. 
+
+# One "#" makes the biggest font, a giant header
+## two make a smaller one, a sub header. 
+### three makes a section header
+#### and so on and so forth. 
+
+Try knitting the whole document (using the blue "Knit" button with the yarn ball above) to see what those headers and the included chunks look like. 
+
+### Other fun notes
+
+A nice way to make very pretty tables with less space is kable, from the knitr package. This format is easier to copy and paste and looks nicer in your knitted output file. 
+```{r table kable}
+head(butterfly)
+kable(head(butterfly))
+```
+
+# Creating a project to keep your data associated with your code
+
+The best way to make your data analysis reproducible is to make an R Project. This file with the ending .Rproj makes it so every time you open the project, it automatically navigates to the right folder that contains all your files (scripts, data, outputs, R Markdown, etc.). 
+
+You can do this using File > New Project... which will make you choose where you want your project to live (it will make you save and close out of what you're currently working on). If you already have a folder where you've been keeping your analysis and data files, then make that one the "directory". If you want to start fresh, make a new directory (aka folder). 
+
+Then, on your computer, move all your files (including this one, if you like) to the folder its just created.  They should show up in the "Files" pane of RStudio on the lower right. 
+
+You're currently viewing this in an R project that I've made. 
+
+Good stuff! 
+
+
+# Saving the outputs of your data analysis
+
+## saving to CSV
+Let's say you've successfully cleaned your data and you want to save it in its clean form so that you or your teammates or future collaborators can use it. This is very easy and very similar to the functions you used to import your data! 
+```{r saving files to csv}
+heather <- head(heather) # This line selects only the first ten rows and first two columns, just to make it different from our other files. 
+
+write.csv(heather, file = "heather.csv") # check the Files pane. Did a new file appear?
+```
+
+## saving to a .Rdata file
+
+This is great if you have multiple objects to keep together and know that a future user will be using R to look at it. 
+```{r saving to Rdata}
+save(heather, hog2, fw, file = "MyData.Rdata")  
+```
+
+## Saving a figure in high quality
+
+```{r saving figure}
+# set units to "in" or "cm", resolution (res) to 300 dpi for publication quality figures, set a size, and name your file.
+
+tiff("MyFavoriteFigure.tif", width =4.5, height = 4, units = 'in', res = 300)
+
+ggplot(hog2)+#Then, run all the code that goes with your figure! 
+  aes(x = site, y = count)+
+  geom_boxplot(fill = "green")
+
+dev.off()  # Finally, the dev.off() line tells it you're all done and saves the figure. 
+
+```
+
+
+### Fin. 
+
+
